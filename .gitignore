@@ -1,4 +1,6 @@
 *.pyc
 *~
-
+*.pydev*
+*.project
 *.sublime-*
+test_output.ts
