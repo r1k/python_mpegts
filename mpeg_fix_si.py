@@ -18,39 +18,46 @@ class TsPacketFileIO:
 		self.filename = filename
 		try:
 			if wr == 'read':
-				filestream = ConstBitStream( filename=self.filename )
+				self.filestream = ConstBitStream( filename=self.filename )
 				self.byte_reader = self.filestream.cut(188*8)
 			else:
-				filestream = open(filename, 'wb')
+				self.filestream = open(filename, 'wb')
 		except Exception, e:
 			raise e
 
 	def getpacket(self):
-		if self.wr == 'write':
+		if self.wr == 'read':
 			return next(self.byte_reader)
-		else
+		else:
 			raise Exception("trying to write to input stream")
 
 	def writepacket(self, packet):
-		if self.wr == 'read':
+		if self.wr == 'write':
 			self.filestream.write(packet.tobytes())
-		else
+		else:
 			raise Exception("trying to read from output stream")
 
 
 if __name__ == '__main__':
-    
-    input_filename = sys.argv[1]
-    output_filename = sys.argv[2]
 
-    pid = sys.argv[3]
+	input_filename = sys.argv[1]
+	output_filename = sys.argv[2]
 
-    reader = TsPacketFileIO()
-    reader.open(filename=input_filename)
+	pid = int(sys.argv[3])
 
-    writer = TsPacketFileIO()
-    writer.open(filename=output_filename, wr='write')
+	reader = TsPacketFileIO()
+	reader.open(filename=input_filename)
 
-    for packet in reader.byte_reader:
+	writer = TsPacketFileIO()
+	writer.open(filename=output_filename, wr='write')
 
-    	PID = packet[12:24]
+	for packet in reader.byte_reader:
+
+		PID = packet[11:24]
+
+		if pid == PID.uint:
+
+			writer.writepacket(packet)
+
+	print "Done!"
+
