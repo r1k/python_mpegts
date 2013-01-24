@@ -41,23 +41,35 @@ class TsPacketFileIO:
 if __name__ == '__main__':
 
 	input_filename = sys.argv[1]
-	output_filename = sys.argv[2]
-
-	pid = int(sys.argv[3])
 
 	reader = TsPacketFileIO()
 	reader.open(filename=input_filename)
 
-	writer = TsPacketFileIO()
-	writer.open(filename=output_filename, wr='write')
+	PATwriter = TsPacketFileIO()
+	PATwriter.open(filename=pat.ts, wr='write')
+
+	PMTwriter = TsPacketFileIO()
+	PMTwriter.open(filename=pmt.ts, wr='write')
+
+	SDTwriter = TsPacketFileIO()
+	SDTwriter.open(filename=sdt.ts, wr='write')
 
 	for packet in reader.byte_reader:
 
 		PID = packet[11:24]
 
-		if pid == PID.uint:
+		if '0x1' == PID.uint:
 
-			writer.writepacket(packet)
+			PATwriter.writepacket(packet)
+    
+	elif '0x20' == PID.uint:
+        
+		PMTwrite.writepacket(packet)
+        
+	elif '0x11' == PID.uint:
+        
+		SDTwriter.writepacket(packet)
+        
 
 	print "Done!"
 
