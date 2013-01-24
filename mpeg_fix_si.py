@@ -16,23 +16,8 @@ class TsPacketFileIO:
 
 	filename=''
 	filestream = None
-
 	byte_reader = None
-
 	wr = 'read'
-
-#	def open(self, filename, wr='read'):
-#		self.wr = wr
-#		self.filename = filename
-#		try:
-#			if wr == 'read':
-#				print 'read ' + self.filename
-#				self.filestream = ConstBitStream( filename=self.filename )
-#				self.byte_reader = self.filestream.cut(188*8)
-#			else:
-#				self.filestream = open(filename, 'wb')
-#		except Exception, e:
-#			raise e
 
 	def open(self, filename, wr='read'):
 		self.wr = wr
@@ -42,7 +27,7 @@ class TsPacketFileIO:
 				print 'read ' + self.filename
 				self.filestream = open( self.filename, 'rb' )
 				
-				class gen:
+				class itr:
 					def __init__ (self, s):
 						self.s = s
 					def next(self):
@@ -54,7 +39,16 @@ class TsPacketFileIO:
 					def __iter__(self):
 						return self
 					
-				self.byte_reader = gen(self.filestream)		
+				self.byte_reader = itr(self.filestream)
+				
+#				def gen():
+#					temp = self.filestream.read(188)
+#					while len(temp) == 188:
+#						yield bytearray(temp)
+#						temp = self.filestream.read(188)
+#						
+#				self.byte_reader = gen()
+						
 			else:
 				self.filestream = open(filename, 'wb')
 		except Exception, e:
